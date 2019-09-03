@@ -3,8 +3,6 @@
 .AppleDouble
 .LSOverride
 
-
-
 # Thumbnails
 ._*
 
@@ -120,14 +118,6 @@ typings/
 # dotenv environment variables file
 .env
 
-
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-
 *.gem
 *.rbc
 /.config
@@ -188,3 +178,6 @@ package-lock.json
 _site/
 .sass-cache/
 .jekyll-metadata
+
+# miscellaneous
+/.vscode
