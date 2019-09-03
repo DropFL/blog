@@ -22,8 +22,7 @@ url     : https://dropfl.github.io # the base hostname & protocol for your site 
 baseurl : /blog # does not include hostname
 title   : DropFL's Blog
 description: > # this means to ignore newlines until "Language & timezone"
-  Blog about programming & computer science things.
-  Powered by GitHub Pages, managed by DropFL.
+  Blog about programming & computer science things.&#013;Powered by GitHub Pages, managed by DropFL.
 
 
 ## => Language and Timezone
