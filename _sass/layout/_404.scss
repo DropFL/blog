@@ -6,6 +6,7 @@
     h1 {
       font-size: map-get($base, font-size-xl) * 4;
       line-height: 1;
+      text-align: center;
     }
     p {
       font-size: map-get($base, font-size-xl) * 1.2;
