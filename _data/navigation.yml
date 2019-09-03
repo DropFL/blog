@@ -10,11 +10,11 @@ header:
     url: /archive.html
 
   - titles:
-      en      : &EN       About
+      en      : &EN       Docs Site
       en-GB   : *EN
       en-US   : *EN
       en-CA   : *EN
       en-AU   : *EN
-      ko      : &KO       소개
+      ko      : &KO       문서 사이트
       ko-KR   : *KO
-    url: /about.html
+    url: https://dropfl.github.io/docs/
