@@ -5,11 +5,11 @@ $base: (
   font-size-root:         16px,
   font-size-root-sm:      14px,
 
-  font-size-xl:           1.5rem,
-  font-size-lg:           1.25rem,
-  font-size:              1rem,
-  font-size-sm:           .85rem,
-  font-size-xs:           .7rem,
+  font-size-xl:           1.5em,
+  font-size-lg:           1.25em,
+  font-size:              1em,
+  font-size-sm:           .85em,
+  font-size-xs:           .7em,
 
   font-size-h1-xl:        3.5rem,
   font-size-h2-xl:        2.5rem,
@@ -55,7 +55,7 @@ $base: (
   line-height-sm:         1.4,
   line-height-xs:         1.2,
 
-  spacer:                 1rem,
+  spacer:                 1em,
 
   border-radius-lg:       .8rem,
   border-radius:          .4rem,
@@ -107,11 +107,11 @@ $clickable: (
   transition:             all .2s ease-in-out
 );
 
-$button-height-xl:        2.8rem;
-$button-height-lg:        2.3rem;
-$button-height:           1.9rem;
-$button-height-sm:        1.5rem;
-$button-height-xs:        1.2rem;
+$button-height-xl:        3em;
+$button-height-lg:        2.5em;
+$button-height:           2em;
+$button-height-sm:        1.6em;
+$button-height-xs:        1.3em;
 
 $button: (
   padding-y-xl:           ($button-height-xl - map-get($base, font-size-xl)) / 2,
