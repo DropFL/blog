@@ -1,5 +1,5 @@
 ---
-title: "CMake INTERFACE 라이브러리"
+title: "[CMake] INTERFACE 라이브러리"
 tags:
   - CMake
 show_author_profile: true
@@ -8,6 +8,8 @@ show_author_profile: true
 최근 Android Studio에서 CMake 3.10.2를 통해 JNI 프로젝트를 구성해봤는데, 그 과정에서 `INTERFACE` 라이브러리에 관해 알게된 내용입니다.
 
 <!--more-->
+
+{:red: style="color:red"}
 
 ## CMake 내 라이브러리
 
@@ -68,12 +70,25 @@ target_link_libraries(
 
 ## 링크 순서 문제
 
-그런데 이렇게 구성한 후 빌드를 돌린 결과, 계속 링크에 실패하여 내부 커맨드를 확인해봤습니다.
+그런데 이 상태에서 빌드를 돌리면 계속 링크에 실패해서, verbose 모드로 내부 커맨드를 확인해봤습니다.
 
 `... -lSysLib1 -lSysLib2 -lMyLibs/libfoo.a -lMyLibs/libbar.a ...`
 
-원래 의도대로라면 `MyLibs`에 속한 라이브러리들이 먼저 링크되어야 하는데, 순서가 뒤바뀌는 현상이 발견되었습니다.
-또한, 순환 참조를 해결하기 위해 최상위 `CMakeLists.txt`를 다음과 같이 고치고 빌드를 돌려봤더니 더 예상치 못한 결과가 나타났습니다.
+어? 이건 기대한 링크 순서와 다른데요? 분명 CMake 상에서 `AppJNIPart`에 `target_link_libraries` 커맨드를 적용할 때 `MyLibs`, `SysLib1`, `SysLib2` 순으로 링크했는데요...
+
+```cmake
+target_link_libraries(
+  AppJNIPart
+
+  PRIVATE MyLibs    # 1st
+  PRIVATE SysLib1   # 2nd
+  PRIVATE SysLib2   # 3rd
+)
+```
+
+그럼 당연히 **`MyLibs`에 속한 라이브러리들이 <span>먼저</span>{: red} 링크되어야 할텐데**, 왜 멋대로 순서가 뒤바뀐 걸까요?
+
+더 이상한 것은 최상위 `CMakeLists.txt`를 다음과 같이 고쳤을 때 일어났습니다.
 
 ```cmake
 add_library(AppJNIPart SHARED)
@@ -90,9 +105,15 @@ target_link_libraries(
 )
 ```
 
-`... -Wl,-( -Wl,-) -lSysLib1 -lSysLib2 -lMyLibs/libfoo.a -lMyLibs/libbar.a ...`
+`MyLibs`에 속한 라이브러리 간 순환 참조를 해결하기 위해 넣은 플래그로, 의도한 바는 다음과 같습니다.
 
-`-(`, `-)` 옵션을 내버려둔 채로 `MyLibs`만 맨 뒤로 가버리는 현상이 발생해, 순환 참조를 지정할 수 없게 되어버렸습니다!
+**의도** : `... -Wl,-( -lMyLibs/libfoo.a -lMyLibs/libbar.a -Wl,-) -lSysLib1 -lSysLib2 ...`
+
+그런데 실제 최종 커맨드는 다음과 같았습니다.
+
+**실제** : `... -Wl,-( -Wl,-) -lSysLib1 -lSysLib2 -lMyLibs/libfoo.a -lMyLibs/libbar.a ...`
+
+**`-(`, `-)` 옵션을 내버려둔 채 `MyLibs`만 맨 뒤로 가버려**, 순환 참조를 지정할 수 없게 되어버렸습니다!
 
 이후 CMake 삽질을 거듭하며 경험적으로 알게 된 사실은 다음과 같습니다.
 
@@ -117,7 +138,9 @@ endforeach()
 target_link_libraries(MyLibs INTERFACE "-Wl,-)") # added
 ```
 
-순환 참조 플래그를 `MyLibs` 라이브러리에 추가하여, 하위 라이브러리 링크 옵션을 감싸도록 수정했습니다.
+순환 참조 플래그를 `MyLibs` 라이브러리에 추가하여 하위 라이브러리 링크 옵션을 감싸도록 수정했습니다.
+
+이렇게 되면 `MyLibs`가 포함하는 링크 옵션에 순환 참조 플래그가 포함되어, 이전처럼 라이브러리 링크 옵션이 플래그를 탈출하는 현상을 막을 수 있습니다.
 
 ```cmake
 # CMakeLists.txt
@@ -142,3 +165,5 @@ target_link_libraries(
 ```
 
 `SysLibs` 라이브러리를 추가로 두어, `MyLibs` 라이브러리보다 링크 옵션이 먼저 오지 않도록 수정했습니다.
+
+`SysLibs`가 `MyLibs`가 포함하는 링크 옵션에 순환 참조 플래그가 포함되어, 이전처럼 라이브러리 링크 옵션이 플래그를 탈출하는 현상을 막을 수 있습니다.
