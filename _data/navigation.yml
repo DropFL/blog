@@ -8,13 +8,3 @@ header:
       ko      : &KO       아카이브
       ko-KR   : *KO
     url: /archive.html
-
-  - titles:
-      en      : &EN       Docs Site
-      en-GB   : *EN
-      en-US   : *EN
-      en-CA   : *EN
-      en-AU   : *EN
-      ko      : &KO       문서 사이트
-      ko-KR   : *KO
-    url: https://dropfl.github.io/docs/
